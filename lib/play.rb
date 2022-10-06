@@ -25,6 +25,7 @@ until board.over?
   turn = get_move(board, turn)
   board.display
 end
+
 if board.winner?[0]
   puts "And the winner is...\n#{board.winner?[1]}!"
 else
