@@ -2,7 +2,7 @@
 
 SYMBOLS = { 0 => 'X', 1 => 'O' }.freeze
 class Square
-  def initialize(marked, player)
+  def initialize(marked = false, player = -1)
     @marked = marked
     @player = player
   end
