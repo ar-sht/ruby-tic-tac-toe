@@ -1,53 +1,39 @@
 # frozen_string_literal: true
-
-require_relative 'square'
 class Board
-  def initialize(squares = Array.new(3) { Array.new(3) { Square.new } })
+
+  WINNERS = [[0, 1, 2], [3, 4, 5], [6, 7, 8],
+             [0, 3, 6], [1, 4, 7], [2, 5, 8],
+             [0, 4, 8], [2, 4, 6]].freeze
+  def initialize(squares = Array.new(3) { Array.new(3) { '' } })
     @squares = squares
   end
 
   def mark_square(x_coord, y_coord, player)
-    @squares[y_coord][x_coord].mark(player)
+    @squares[2 - y_coord][x_coord] = player.zero? ? 'X' : 'O'
   end
 
   def get_square(x_coord, y_coord)
-    @squares[y_coord][x_coord].marking
+    @squares[2 - y_coord][x_coord]
   end
 
   def display
-    print("+---+---+---+\n")
-    @squares.each_with_index { |row, i| print("| #{row[0].marking} | #{row[1].marking} | #{row[2].marking} | #{i + 1}\n+---+---+---+\n") }
-    puts('  1   2   3  ')
-  end
-
-  def winner?
-    diag1 = []
-    diag2 = []
-    3.times do |i|
-      if @squares[i][0].marking == @squares[i][1].marking && @squares[i][1].marking == @squares[i][2].marking &&
-         @squares[i][1].marking != ' '
-        return [true, squares[i][1].marking]
-      elsif @squares[0][i].marking == @squares[1][i].marking && @squares[1][i].marking == @squares[2][i].marking &&
-            squares[1][i].marking != ' '
-        return [true, squares[1][i].marking]
-      end
-
-      diag1 << @squares[i][i].marking
-      diag2 << @squares[i][2 - i].marking
-    end
-    %w[X O].each do |symbol|
-      return [true, @squares[1][1].marking] if diag1.all? { |val| val == symbol } || diag2.all? { |val| val == symbol }
-    end
-    [false, @squares[1][1]]
+    print("  +---+---+---+\n")
+    @squares.each_with_index { |row, i| print("#{3 - i} | #{row[0].empty? ? ' ' : row[0]} | #{row[1].empty? ? ' ' : row[1]} | #{row[2].empty? ? ' ' : row[2]} |\n  +---+---+---+\n") }
+    puts('    1   2   3  ')
   end
 
   def full?
-    @squares.all? { |row| row.none? { |square| square.marking == ' ' } }
+    @squares.all? { |row| row.none? { |square| square == '' } }
   end
 
   def over?
-    full? || winner?[0]
-  end
+    flat_board = @squares.flatten
+    WINNERS.any? do |winner|
+      matcher = [flat_board[winner[0]], flat_board[winner[1]], flat_board[winner[2]]].uniq!
 
-  attr_accessor :squares
+      return true if !matcher.nil? && matcher.length == 1 && matcher != ['']
+    end
+
+    full?
+  end
 end
