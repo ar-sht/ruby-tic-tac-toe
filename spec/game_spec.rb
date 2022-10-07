@@ -99,5 +99,23 @@ describe Game do
     end
   end
 
-  describe '#validate_input'
+  describe '#validate_input' do
+    subject(:game) { Game.new }
+
+    context 'when given valid input' do
+      it 'returns input but split into an array' do
+        input = '1 1'
+        result = game.validate_input(input)
+        expect(result).to eq %w[1 1]
+      end
+    end
+
+    context 'when given invalid input' do
+      it 'returns nil' do
+        input = 'a a'
+        result = game.validate_input(input)
+        expect(result).to be_nil
+      end
+    end
+  end
 end
